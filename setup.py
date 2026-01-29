@@ -24,7 +24,7 @@ setup(
                "kernels/dilation.cu",
                "kernels/erosion.cu",
                "kernels/module.cpp",
-               #"kernels/bilateral.cu"
+               "kernels/bilateral.cu"
            ],
            extra_compile_args={
                "cxx": cxx_args,

@@ -5,10 +5,10 @@ import fastcv
 import numpy as np
 
 
-def benchmark_bilateral(sizes=[1024, 2048, 4096], runs=10):
+def benchmark_bilateral(sizes=[1024, 2048, 4096, 8192], runs=10):
     results = []
 
-    d = 9
+    filter_size = 9
     sigma_color = 75.0
     sigma_space = 75.0
 
@@ -20,18 +20,18 @@ def benchmark_bilateral(sizes=[1024, 2048, 4096], runs=10):
 
         start = time.perf_counter()
         for _ in range(runs):
-            _ = cv2.bilateralFilter(img_np, d, sigma_color, sigma_space)
+            _ = cv2.bilateralFilter(img_np, filter_size, sigma_color, sigma_space)
 
         end = time.perf_counter()
         cv_time = (end - start) / runs * 1000  # ms per run
 
 
-        # torch.cuda.synchronize()
-        # start = time.perf_counter()
-        # for _ in range(runs):
-        #     _ = fastcv.bilateral_filter(img_torch, d, sigma_color, sigma_space)
-        # torch.cuda.synchronize()
-        # end = time.perf_counter()
+        torch.cuda.synchronize()
+        start = time.perf_counter()
+        for _ in range(runs):
+            _ = fastcv.bilateral_filter(img_torch, filter_size, sigma_color, sigma_space)
+        torch.cuda.synchronize()
+        end = time.perf_counter()
         fc_time = (end - start) / runs * 1000  # ms per run
 
         results.append((size, cv_time, fc_time))

@@ -6,7 +6,7 @@ torch::Tensor box_blur(torch::Tensor img, int blurSize);
 torch::Tensor sobel(torch::Tensor img);
 torch::Tensor dilation(torch::Tensor img, int filterSize);
 torch::Tensor erosion(torch::Tensor img, int filterSize);
-// torch::Tensor bilateral(torch::Tensor img, int diameter, double sigmaColor, double sigmaSpace);
+torch::Tensor bilateral_filter(torch::Tensor img, int filter_size, float sigma_color, float sigma_space);
 
 PYBIND11_MODULE(TORCH_EXTENSION_NAME, m){
     m.def("rgb2gray", &rgb_to_gray, "rgb to grayscale kernel");
@@ -14,5 +14,5 @@ PYBIND11_MODULE(TORCH_EXTENSION_NAME, m){
     m.def("sobel", &sobel, "sobel filter kernel");
     m.def("dilate", &dilation, "dilation kernel");
     m.def("erode", &erosion, "erosion kernel");
-    // m.def("bilateral", &bilateral, "bilateral filter kernel");
+    m.def("bilateral_filter", &bilateral_filter, "bilateral filter kernel");
 }
