@@ -3,7 +3,7 @@ from torch.utils.cpp_extension import BuildExtension, CUDAExtension
 
 cxx_args = ["/O2", "/std:c++17", "/permissive-"]
 nvcc_args = [
-   "-O2",
+   "--extended-lambda","-O2",
    "-std=c++17",
    "-D__CUDA_NO_HALF_OPERATORS__",
    "-D__CUDA_NO_HALF_CONVERSIONS__",

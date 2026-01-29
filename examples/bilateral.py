@@ -12,4 +12,5 @@ img_tensor = torch.from_numpy(img).cuda()
 bilateral_tensor = fastcv.bilateral_filter(img_tensor, 15, 75, 75)
 bilateral_image = bilateral_tensor.cpu().numpy()
 cv2.imwrite(output_image_path, bilateral_image)
+
 print("saved bilateral filtered image.")
