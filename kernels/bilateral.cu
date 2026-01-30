@@ -39,13 +39,13 @@ __global__ void bilateralKernel(
     int shared_w = blockDim.x + 2 * radius;
     int shared_h = blockDim.y + 2 * radius;
 
-    int shared_thread_id = threadIdx.y * blockDim.x + threadIdx.x;
-    int shared_threads = shared_w * shared_h * channels;
+    int shared_pixel_id = threadIdx.y * blockDim.x + threadIdx.x;
+    int shared_pixels = shared_w * shared_h * channels;
 
     int start_column = blockIdx.x * blockDim.x - radius;
     int start_row = blockIdx.y * blockDim.y - radius;
 
-    for (int i = shared_thread_id; i < shared_threads; i += blockDim.x * blockDim.y) { // load image into shared memory
+    for (int i = shared_pixel_id; i < shared_pixels; i += blockDim.x * blockDim.y) { // load image into shared memory
         
         int current_channel = i % channels;
         int temp = i / channels;
@@ -119,12 +119,7 @@ torch::Tensor bilateral_filter(torch::Tensor img, int filter_size, float sigma_c
 
         nvtxRangePushA("calculate_color_weights_thrust");
             thrust::device_vector<float> thrust_color_weights(256); // device vector to hold color weights
-            thrust::counting_iterator<int> color_iterator(0);
-            thrust::transform( // compute color weights using thrust
-                thrust::device,
-                color_iterator, 
-                color_iterator + 256,
-                thrust_color_weights.begin(),
+            thrust::tabulate( thrust::device, thrust_color_weights.begin(), thrust_color_weights.end(), // compute color weights using thrust
                 [=] __host__ __device__ (int intensity_diff) {
                     return expf(-(squared<float>(intensity_diff)) / (2.0f * squared<float>(sigma_color)));
                 }
